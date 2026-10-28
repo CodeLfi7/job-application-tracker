@@ -33,5 +33,5 @@ python app.py
 Open your web browser and navigate to:
 http://127.0.0.1:5000
 Project Demo Video
-Watch the full 5:26 project demo and walkthrough: https://youtu.be/cdqnmC-tJwg Or watch the video uploaded on Cabvas
+Watch the full 5:26 project demo and walkthrough: https://youtu.be/cdqnmC-tJwg 
 
