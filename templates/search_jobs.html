@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Skill Matcher</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5 mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Job Skill Matcher</h1>
+            <a href="/" class="btn btn-outline-secondary">Back to Dashboard</a>
+        </div>
+
+        <!-- Search Form Card -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Filter Jobs by Skill or Title</h5>
+            </div>
+            <div class="card-body">
+                <form action="/search_jobs" method="POST" class="row g-3">
+                    <div class="col-md-10">
+                        <input type="text" class="form-control" name="search_query" value="{{ search_query }}" placeholder="Enter a skill (e.g., Python, SQL) or keyword..." required>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-success w-100">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Results Table Section -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Matching Job Postings</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Job Title</th>
+                            <th>Company</th>
+                            <th>Type</th>
+                            <th>Skills Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for job in jobs %}
+                        <tr>
+                            <td><strong>{{ job.job_title }}</strong></td>
+                            <td>{{ job.company_name }}</td>
+                            <td><span class="badge bg-secondary">{{ job.job_type }}</span></td>
+                            <td><code>{{ job.skills_required if job.skills_required else 'N/A' }}</code></td>
+                            <td>{{ job.description if job.description else 'N/A' }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">
+                                {% if search_query %}
+                                    No matching jobs found for "{{ search_query }}".
+                                {% else %}
+                                    Use the search bar above to look up jobs by skill or title!
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

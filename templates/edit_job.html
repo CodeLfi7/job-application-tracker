@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Job</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-warning text-dark">
+                <h3>Edit Job: {{ job.title }}</h3>
+            </div>
+            <div class="card-body">
+                <form action="/edit_job/{{ job.job_id }}" method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Company *</label>
+                            <select class="form-select" name="company_id" required>
+                                {% for company in companies %}
+                                <option value="{{ company.company_id }}" {% if company.company_id == job.company_id %}selected{% endif %}>
+                                    {{ company.company_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Job Title *</label>
+                            <input type="text" class="form-control" name="title" value="{{ job.title }}" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-control" name="location" value="{{ job.location }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Job Type</label>
+                            <select class="form-select" name="job_type">
+                                <option value="Full-time" {% if job.job_type == 'Full-time' %}selected{% endif %}>Full-time</option>
+                                <option value="Part-time" {% if job.job_type == 'Part-time' %}selected{% endif %}>Part-time</option>
+                                <option value="Contract" {% if job.job_type == 'Contract' %}selected{% endif %}>Contract</option>
+                                <option value="Internship" {% if job.job_type == 'Internship' %}selected{% endif %}>Internship</option>
+                                <option value="Remote" {% if job.job_type == 'Remote' %}selected{% endif %}>Remote</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Salary Range</label>
+                            <input type="text" class="form-control" name="salary_range" value="{{ job.salary_range }}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Skills Required</label>
+                        <input type="text" class="form-control" name="skills_required" value="{{ job.skills_required }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="3">{{ job.description }}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Job</button>
+                    <a href="/jobs" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

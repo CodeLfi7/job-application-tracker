@@ -1,0 +1,12 @@
+# AI Usage Documentation
+
+In accordance with course guidelines for COP4751, this document details the scope and nature of AI assistance utilized during the development of the Job Application Tracker project[span_2](start_span)[span_2](end_span).
+
+## Scope of AI Assistance
+AI tools were used as a collaborative pair-programming assistant throughout the software development lifecycle:
+* **Debugging & Schema Alignment:** Assisting in diagnosing SQL `ProgrammingError` exceptions (such as column name mismatches) and refactoring backend queries to properly sync with the MySQL database schema[span_3](start_span)[span_3](end_span).
+* **Feature Implementation Guidance:** Structuring Flask routing logic for full CRUD operations across multiple related tables (`companies`, `jobs`, `applications`)[span_4](start_span)[span_4](end_span).
+* **Advanced Querying:** Designing the SQL `LIKE` dynamic filter for the **Job Skill Matcher** feature to search postings by required keywords and tech stacks[span_5](start_span)[span_5](end_span).
+* **UI Layout & Styling:** Integrating Bootstrap 5 components for responsive navigation, tables, status badges, and dashboard layout[span_6](start_span)[span_6](end_span).
+
+All core architectural decisions, database schema designs, code integration, testing, and final validation were thoroughly reviewed and verified independently by the student.
