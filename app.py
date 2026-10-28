@@ -132,23 +132,19 @@ def jobs():
     conn.close()
     return render_template('jobs.html', jobs=jobs_list, companies=companies_list)
 
-
 @app.route('/add_job', methods=['POST'])
 def add_job():
-    company_id = request.form['company_id']
-    job_title = request.form['title']  # matches form input name="title"
-    job_type = request.form['job_type']
-    salary_range = request.form['salary_range']
-    description = request.form['description']
-    skills_required = request.form['skills_required']
+    company_id = request.form.get('company_id')
+    job_title = request.form.get('title') or request.form.get('job_title') or ''
+    job_type = request.form.get('job_type', '')
 
     conn = get_db_connection()
     cursor = conn.cursor()
-    # Updated to use job_title instead of title, and removed location
+    # Only insert columns that actually exist in your database table schema
     cursor.execute('''
-        INSERT INTO jobs (company_id, job_title, job_type, salary_range, description, skills_required)
-        VALUES (%s, %s, %s, %s, %s, %s)
-    ''', (company_id, job_title, job_type, salary_range, description, skills_required))
+        INSERT INTO jobs (company_id, job_title, job_type)
+        VALUES (%s, %s, %s)
+    ''', (company_id, job_title, job_type))
 
     conn.commit()
     cursor.close()
@@ -165,17 +161,13 @@ def edit_job(job_id):
         company_id = request.form['company_id']
         job_title = request.form['title']
         job_type = request.form['job_type']
-        salary_range = request.form['salary_range']
-        description = request.form['description']
-        skills_required = request.form['skills_required']
 
-        # Updated to use job_title, and removed location
+        # Only update columns that exist in your database table schema
         cursor.execute('''
             UPDATE jobs 
-            SET company_id = %s, job_title = %s, job_type = %s, 
-                salary_range = %s, description = %s, skills_required = %s
+            SET company_id = %s, job_title = %s, job_type = %s
             WHERE job_id = %s
-        ''', (company_id, job_title, job_type, salary_range, description, skills_required, job_id))
+        ''', (company_id, job_title, job_type, job_id))
 
         conn.commit()
         cursor.close()
@@ -193,10 +185,14 @@ def edit_job(job_id):
     return render_template('edit_job.html', job=job, companies=companies_list)
 
 
+
 @app.route('/delete_job/<int:job_id>', methods=['POST'])
 def delete_job(job_id):
     conn = get_db_connection()
     cursor = conn.cursor()
+    # Delete linked applications first to satisfy the foreign key constraint
+    cursor.execute('DELETE FROM applications WHERE job_id = %s', (job_id,))
+    # Now safely delete the job
     cursor.execute('DELETE FROM jobs WHERE job_id = %s', (job_id,))
     conn.commit()
     cursor.close()
