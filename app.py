@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
+from datetime import date
 import mysql.connector
 
 app = Flask(__name__)
@@ -240,13 +241,15 @@ def add_application():
     job_id = request.form['job_id']
     status = request.form['status']
     notes = request.form.get('notes', '')
+    # Grab date from form if it exists, otherwise default to today's date
+    application_date = request.form.get('application_date') or date.today().strftime('%Y-%m-%d')
 
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        INSERT INTO applications (job_id, status, notes)
-        VALUES (%s, %s, %s)
-    ''', (job_id, status, notes))
+        INSERT INTO applications (job_id, status, application_date, notes)
+        VALUES (%s, %s, %s, %s)
+    ''', (job_id, status, application_date, notes))
 
     conn.commit()
     cursor.close()
