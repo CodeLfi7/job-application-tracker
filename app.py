@@ -266,28 +266,51 @@ def delete_application(application_id):
 
 @app.route('/search_jobs', methods=['GET', 'POST'])
 def search_jobs():
+    search_query = ''
     if request.method == 'POST':
-        search_query = request.form.get('query', '')
+        search_query = (
+            request.form.get('query') or
+            request.form.get('search') or
+            request.form.get('keyword') or
+            request.form.get('q') or
+            request.form.get('term') or ''
+        )
+        if not search_query and request.form:
+            search_query = list(request.form.values())[0]
     else:
-        search_query = request.args.get('query', '')
+        search_query = (
+            request.args.get('query') or
+            request.args.get('search') or
+            request.args.get('keyword') or
+            request.args.get('q') or
+            request.args.get('term') or ''
+        )
+        if not search_query and request.args:
+            search_query = list(request.args.values())[0]
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
-    query = """
-        SELECT j.job_id, j.job_title, j.job_type, c.company_name 
-        FROM jobs j
-        JOIN companies c ON j.company_id = c.company_id
-        WHERE j.job_title LIKE %s OR j.job_type LIKE %s
-    """
-    like_param = f"%{search_query}%"
-    cursor.execute(query, (like_param, like_param))
-    jobs_list = cursor.fetchall()
+    if not str(search_query).strip():
+        jobs_list = []
+    else:
+        # Only query columns that officially exist in your database table
+        query = """
+            SELECT j.job_id, j.job_title, j.job_type, c.company_name 
+            FROM jobs j
+            JOIN companies c ON j.company_id = c.company_id
+            WHERE j.job_title LIKE %s OR j.job_type LIKE %s
+        """
+        like_param = f"%{search_query}%"
+        cursor.execute(query, (like_param, like_param))
+        jobs_list = cursor.fetchall()
 
     cursor.close()
     conn.close()
 
     return render_template('search_jobs.html', jobs=jobs_list, search_query=search_query)
+
+
 
 
 if __name__ == '__main__':
