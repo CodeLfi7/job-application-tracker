@@ -264,35 +264,29 @@ def delete_application(application_id):
     conn.close()
     return redirect(url_for('applications'))
 
-
 @app.route('/search_jobs', methods=['GET', 'POST'])
 def search_jobs():
+    if request.method == 'POST':
+        search_query = request.form.get('query', '')
+    else:
+        search_query = request.args.get('query', '')
+
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    jobs_list = []
-    search_query = ''
 
-    if request.method == 'POST':
-        search_query = request.form.get('search_query', '')
-        # Search by skills required or job title
-        query = '''
-            SELECT 
-                j.job_id,
-                j.job_title,
-                j.job_type,
-                j.skills_required,
-                j.description,
-                c.company_name 
-            FROM jobs j 
-            LEFT JOIN companies c ON j.company_id = c.company_id
-            WHERE j.skills_required LIKE %s OR j.job_title LIKE %s
-        '''
-        like_param = f'%{search_query}%'
-        cursor.execute(query, (like_param, like_param))
-        jobs_list = cursor.fetchall()
+    query = """
+        SELECT j.job_id, j.job_title, j.job_type, c.company_name 
+        FROM jobs j
+        JOIN companies c ON j.company_id = c.company_id
+        WHERE j.job_title LIKE %s OR j.job_type LIKE %s
+    """
+    like_param = f"%{search_query}%"
+    cursor.execute(query, (like_param, like_param))
+    jobs_list = cursor.fetchall()
 
     cursor.close()
     conn.close()
+
     return render_template('search_jobs.html', jobs=jobs_list, search_query=search_query)
 
 
